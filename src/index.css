@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #536FBF;
+  --color-brand-red: #EF2D3B;
+  --color-brand-navy: #2C3A46;
+  --color-brand-grey: #E1E1E1;
+  --color-brand-charcoal: #404041;
+  --font-sans: "Public Sans", sans-serif;
+}

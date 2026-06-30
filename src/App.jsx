@@ -1,8 +1,22 @@
+import { Routes, Route } from 'react-router-dom'
+import Layout from './components/Layout'
+import Home from './pages/Home'
+import Catalogue from './pages/Catalogue'
+import ProductDetail from './pages/ProductDetail'
+import About from './pages/About'
+import Quote from './pages/Quote'
+
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-3xl font-bold text-blue-600">MSMR Jamali — it's alive</h1>
-    </div>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/catalogue" element={<Catalogue />} />
+        <Route path="/catalogue/:slug" element={<ProductDetail />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/quote" element={<Quote />} />
+      </Route>
+    </Routes>
   )
 }
 
