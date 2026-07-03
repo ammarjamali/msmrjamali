@@ -39,7 +39,7 @@ function SpecRow({ attribute, values }) {
   )
 }
 
-function GalleryGrid({ images, emptyText }) {
+function ProductGalleryGrid({ images, emptyText }) {
   if (images.length === 0) {
     return <p className="text-sm text-brand-charcoal/60 italic">{emptyText}</p>
   }
@@ -48,6 +48,21 @@ function GalleryGrid({ images, emptyText }) {
       {images.map((img) => (
         <div key={img.id} className="aspect-[4/5] bg-brand-grey rounded-lg overflow-hidden">
           <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SiteGalleryGrid({ images, emptyText }) {
+  if (images.length === 0) {
+    return <p className="text-sm text-brand-charcoal/60 italic">{emptyText}</p>
+  }
+  return (
+    <div className="columns-2 lg:columns-3 gap-4 space-y-4">
+      {images.map((img) => (
+        <div key={img.id} className="break-inside-avoid rounded-lg overflow-hidden bg-brand-grey">
+          <img src={img.image_url} alt="" className="w-full h-auto block" />
         </div>
       ))}
     </div>
@@ -88,13 +103,32 @@ function ProductDetail() {
       }
       setCategory(categoryData)
 
-      const [{ data: specsData }, { data: loadData }, { data: galleryData }, { data: colorsData }] =
-        await Promise.all([
-          supabase.from('category_specs').select('*').eq('category_id', categoryData.id).order('sort_order'),
-          supabase.from('load_capacity').select('*').eq('category_id', categoryData.id),
-          supabase.from('gallery_images').select('*').eq('category_id', categoryData.id).order('sort_order'),
-          supabase.from('category_colors').select('sort_order, color_options(*)').eq('category_id', categoryData.id).order('sort_order'),
-        ])
+      const [
+        { data: specsData },
+        { data: loadData },
+        { data: galleryData },
+        { data: colorsData },
+      ] = await Promise.all([
+        supabase
+          .from('category_specs')
+          .select('*')
+          .eq('category_id', categoryData.id)
+          .order('sort_order'),
+        supabase
+          .from('load_capacity')
+          .select('*')
+          .eq('category_id', categoryData.id),
+        supabase
+          .from('gallery_images')
+          .select('*')
+          .eq('category_id', categoryData.id)
+          .order('sort_order'),
+        supabase
+          .from('category_colors')
+          .select('sort_order, color_options(*)')
+          .eq('category_id', categoryData.id)
+          .order('sort_order'),
+      ])
 
       setSpecs(specsData || [])
       setLoadCapacity(loadData || [])
@@ -107,7 +141,11 @@ function ProductDetail() {
   }, [slug])
 
   if (loading) {
-    return <p className="max-w-6xl mx-auto px-6 py-16 text-brand-charcoal">Loading…</p>
+    return (
+      <p className="max-w-6xl mx-auto px-6 py-16 text-brand-charcoal">
+        Loading…
+      </p>
+    )
   }
 
   if (notFound) {
@@ -115,7 +153,9 @@ function ProductDetail() {
       <div className="max-w-6xl mx-auto px-6 py-16">
         <p className="text-brand-charcoal">
           We couldn't find that product.{' '}
-          <Link to="/catalogue" className="text-brand-blue underline">Back to catalogue</Link>
+          <Link to="/catalogue" className="text-brand-blue underline">
+            Back to catalogue
+          </Link>
         </p>
       </div>
     )
@@ -128,8 +168,11 @@ function ProductDetail() {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
-      <Link to="/catalogue" className="text-sm text-brand-blue hover:underline">← Back to catalogue</Link>
+      <Link to="/catalogue" className="text-sm text-brand-blue hover:underline">
+        ← Back to catalogue
+      </Link>
 
+      {/* Hero — large image + name/description/colors */}
       <div className="grid gap-10 lg:grid-cols-2 mt-4 mb-16">
         <div className="aspect-[4/3] bg-brand-grey rounded-lg overflow-hidden">
           {category.cover_image_url ? (
@@ -140,19 +183,29 @@ function ProductDetail() {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-brand-charcoal/40 text-sm">Photo coming soon</span>
+              <span className="text-brand-charcoal/40 text-sm">
+                Photo coming soon
+              </span>
             </div>
           )}
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold text-brand-navy mb-2">{category.name}</h1>
-          <p className="text-brand-blue font-medium mb-4">{category.usage_line}</p>
-          <p className="text-brand-charcoal leading-relaxed mb-8">{category.description}</p>
+          <h1 className="text-3xl font-bold text-brand-navy mb-2">
+            {category.name}
+          </h1>
+          <p className="text-brand-blue font-medium mb-4">
+            {category.usage_line}
+          </p>
+          <p className="text-brand-charcoal leading-relaxed mb-8">
+            {category.description}
+          </p>
 
           {colors.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-brand-navy mb-3">Available colors</h2>
+              <h2 className="text-lg font-bold text-brand-navy mb-3">
+                Available colors
+              </h2>
               <div className="flex flex-wrap gap-5">
                 {colors.map((c) => (
                   <ColorSwatch key={c.color_options.id} color={c.color_options} />
@@ -163,20 +216,29 @@ function ProductDetail() {
         </div>
       </div>
 
+      {/* Sizes & specs + Load capacity */}
       <div className="grid gap-12 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <h2 className="text-xl font-bold text-brand-navy mb-4">Available sizes & specs</h2>
+          <h2 className="text-xl font-bold text-brand-navy mb-4">
+            Available sizes & specs
+          </h2>
           <div className="bg-white border border-brand-grey rounded-lg p-6">
             {specOrder.map((attr) =>
               groupedSpecs[attr] ? (
-                <SpecRow key={attr} attribute={attr} values={groupedSpecs[attr]} />
+                <SpecRow
+                  key={attr}
+                  attribute={attr}
+                  values={groupedSpecs[attr]}
+                />
               ) : null
             )}
           </div>
         </div>
 
         <div>
-          <h2 className="text-xl font-bold text-brand-navy mb-4">Load capacity per shelf</h2>
+          <h2 className="text-xl font-bold text-brand-navy mb-4">
+            Load capacity per shelf
+          </h2>
           <div className="bg-white border border-brand-grey rounded-lg p-6">
             {loadCapacity.length === 0 ? (
               <p className="text-sm text-brand-charcoal/60 italic">
@@ -193,7 +255,10 @@ function ProductDetail() {
                 </thead>
                 <tbody>
                   {loadCapacity.map((row) => (
-                    <tr key={row.id} className="border-b border-brand-grey last:border-0">
+                    <tr
+                      key={row.id}
+                      className="border-b border-brand-grey last:border-0"
+                    >
                       <td className="py-2">{row.panel_gauge}</td>
                       <td className="py-2">{row.angle_gauge}</td>
                       <td className="py-2">{formatCapacity(row)}</td>
@@ -206,14 +271,26 @@ function ProductDetail() {
         </div>
       </div>
 
+      {/* Product gallery — fixed 4:5 ratio */}
       <div className="mt-16">
-        <h2 className="text-xl font-bold text-brand-navy mb-4">Product gallery</h2>
-        <GalleryGrid images={productPhotos} emptyText="Product photos coming soon." />
+        <h2 className="text-xl font-bold text-brand-navy mb-4">
+          Product gallery
+        </h2>
+        <ProductGalleryGrid
+          images={productPhotos}
+          emptyText="Product photos coming soon."
+        />
       </div>
 
+      {/* Site gallery — natural/masonry ratio */}
       <div className="mt-12">
-        <h2 className="text-xl font-bold text-brand-navy mb-4">Installed at customer sites</h2>
-        <GalleryGrid images={sitePhotos} emptyText="On-site photos coming soon." />
+        <h2 className="text-xl font-bold text-brand-navy mb-4">
+          Installed at customer sites
+        </h2>
+        <SiteGalleryGrid
+          images={sitePhotos}
+          emptyText="On-site photos coming soon."
+        />
       </div>
     </div>
   )
