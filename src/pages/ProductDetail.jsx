@@ -46,7 +46,7 @@ function GalleryGrid({ images, emptyText }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {images.map((img) => (
-        <div key={img.id} className="aspect-[4/3] bg-brand-grey rounded-lg overflow-hidden">
+        <div key={img.id} className="aspect-[4/5] bg-brand-grey rounded-lg overflow-hidden">
           <img src={img.image_url} alt="" className="w-full h-full object-cover" />
         </div>
       ))}
