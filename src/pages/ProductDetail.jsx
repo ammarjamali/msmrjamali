@@ -240,7 +240,11 @@ function ProductDetail() {
             Load capacity per shelf
           </h2>
           <div className="bg-white border border-brand-grey rounded-lg p-6">
-            {loadCapacity.length === 0 ? (
+            {category.load_capacity_note ? (
+              <p className="text-sm text-brand-charcoal leading-relaxed">
+                {category.load_capacity_note}
+              </p>
+            ) : loadCapacity.length === 0 ? (
               <p className="text-sm text-brand-charcoal/60 italic">
                 Load capacity chart coming soon — contact us for current ratings.
               </p>
@@ -282,8 +286,8 @@ function ProductDetail() {
         />
       </div>
 
-      {/* Site gallery — natural/masonry ratio */}
-      <div className="mt-12">
+      {/* Site gallery — natural masonry ratio */}
+      <div className="mt-12 mb-8">
         <h2 className="text-xl font-bold text-brand-navy mb-4">
           Installed at customer sites
         </h2>
