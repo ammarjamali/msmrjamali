@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ColorSwatch from '../components/ColorSwatch'
+import WhatsAppProductCard from '../components/WhatsAppProductCard'
 
 const SPEC_LABELS = {
   depth: 'Depth',
@@ -117,6 +118,7 @@ function ProductDetail() {
   const [loadCapacity, setLoadCapacity] = useState([])
   const [gallery, setGallery] = useState([])
   const [colors, setColors] = useState([])
+  const [whatsappProducts, setWhatsappProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
@@ -143,6 +145,7 @@ function ProductDetail() {
         { data: loadData },
         { data: galleryData },
         { data: colorsData },
+        { data: waProductsData },
       ] = await Promise.all([
         supabase
           .from('category_specs')
@@ -163,12 +166,18 @@ function ProductDetail() {
           .select('sort_order, color_options(*)')
           .eq('category_id', categoryData.id)
           .order('sort_order'),
+        supabase
+          .from('whatsapp_products')
+          .select('*')
+          .eq('category_id', categoryData.id)
+          .order('sort_order'),
       ])
 
       setSpecs(specsData || [])
       setLoadCapacity(loadData || [])
       setGallery(galleryData || [])
       setColors(colorsData || [])
+      setWhatsappProducts(waProductsData || [])
       setLoading(false)
     }
 
@@ -303,6 +312,28 @@ function ProductDetail() {
           </div>
         </div>
       </div>
+
+      {/* WhatsApp catalogue products */}
+      {whatsappProducts.length > 0 && (
+        <div className="mt-12">
+          <div className="flex items-center gap-3 mb-6">
+            <h2 className="text-xl font-bold text-brand-navy">
+              Order directly
+            </h2>
+            <span className="text-xs font-semibold bg-[#25D366] text-white px-2.5 py-1 rounded-full">
+              WhatsApp
+            </span>
+          </div>
+          <p className="text-sm text-brand-charcoal mb-6">
+            Browse our ready-made configurations below and order instantly via WhatsApp.
+          </p>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {whatsappProducts.map((product) => (
+              <WhatsAppProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Product gallery — fixed 4:5 ratio */}
       <div className="mt-16">
