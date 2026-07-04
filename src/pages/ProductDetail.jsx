@@ -9,6 +9,7 @@ const SPEC_LABELS = {
   height: 'Height',
   panel_gauge: 'Panel gauge',
   angle_gauge: 'Angle gauge',
+  pakkha_gauge: 'Pakkha gauge',
 }
 
 function groupSpecs(specs) {
@@ -46,8 +47,15 @@ function ProductGalleryGrid({ images, emptyText }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {images.map((img) => (
-        <div key={img.id} className="aspect-[4/5] bg-brand-grey rounded-lg overflow-hidden">
-          <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+        <div
+          key={img.id}
+          className="aspect-[4/5] bg-brand-grey rounded-lg overflow-hidden"
+        >
+          <img
+            src={img.image_url}
+            alt=""
+            className="w-full h-full object-cover"
+          />
         </div>
       ))}
     </div>
@@ -61,7 +69,10 @@ function SiteGalleryGrid({ images, emptyText }) {
   return (
     <div className="columns-2 lg:columns-3 gap-4 space-y-4">
       {images.map((img) => (
-        <div key={img.id} className="break-inside-avoid rounded-lg overflow-hidden bg-brand-grey">
+        <div
+          key={img.id}
+          className="break-inside-avoid rounded-lg overflow-hidden bg-brand-grey"
+        >
           <img src={img.image_url} alt="" className="w-full h-auto block" />
         </div>
       ))}
@@ -73,6 +84,30 @@ function formatCapacity(row) {
   return row.capacity_min_kg === row.capacity_max_kg
     ? `${row.capacity_min_kg} kg`
     : `${row.capacity_min_kg}–${row.capacity_max_kg} kg`
+}
+
+function LoadCapacityTable({ loadCapacity }) {
+  const showAngle = loadCapacity.some((r) => r.angle_gauge !== 0)
+  return (
+    <table className="w-full text-sm">
+      <thead>
+        <tr className="text-left text-brand-navy border-b border-brand-grey">
+          <th className="py-2">Panel gauge</th>
+          {showAngle && <th className="py-2">Angle gauge</th>}
+          <th className="py-2">Capacity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {loadCapacity.map((row) => (
+          <tr key={row.id} className="border-b border-brand-grey last:border-0">
+            <td className="py-2">{row.panel_gauge}</td>
+            {showAngle && <td className="py-2">{row.angle_gauge}</td>}
+            <td className="py-2">{formatCapacity(row)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
 }
 
 function ProductDetail() {
@@ -162,13 +197,23 @@ function ProductDetail() {
   }
 
   const groupedSpecs = groupSpecs(specs)
-  const specOrder = ['depth', 'width', 'height', 'panel_gauge', 'angle_gauge']
+  const specOrder = [
+    'depth',
+    'width',
+    'height',
+    'panel_gauge',
+    'pakkha_gauge',
+    'angle_gauge',
+  ]
   const productPhotos = gallery.filter((img) => img.type === 'product')
   const sitePhotos = gallery.filter((img) => img.type === 'site')
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
-      <Link to="/catalogue" className="text-sm text-brand-blue hover:underline">
+      <Link
+        to="/catalogue"
+        className="text-sm text-brand-blue hover:underline"
+      >
         ← Back to catalogue
       </Link>
 
@@ -208,7 +253,10 @@ function ProductDetail() {
               </h2>
               <div className="flex flex-wrap gap-5">
                 {colors.map((c) => (
-                  <ColorSwatch key={c.color_options.id} color={c.color_options} />
+                  <ColorSwatch
+                    key={c.color_options.id}
+                    color={c.color_options}
+                  />
                 ))}
               </div>
             </div>
@@ -246,30 +294,11 @@ function ProductDetail() {
               </p>
             ) : loadCapacity.length === 0 ? (
               <p className="text-sm text-brand-charcoal/60 italic">
-                Load capacity chart coming soon — contact us for current ratings.
+                Load capacity chart coming soon — contact us for current
+                ratings.
               </p>
             ) : (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-brand-navy border-b border-brand-grey">
-                    <th className="py-2">Panel gauge</th>
-                    <th className="py-2">Angle gauge</th>
-                    <th className="py-2">Capacity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loadCapacity.map((row) => (
-                    <tr
-                      key={row.id}
-                      className="border-b border-brand-grey last:border-0"
-                    >
-                      <td className="py-2">{row.panel_gauge}</td>
-                      <td className="py-2">{row.angle_gauge}</td>
-                      <td className="py-2">{formatCapacity(row)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <LoadCapacityTable loadCapacity={loadCapacity} />
             )}
           </div>
         </div>
