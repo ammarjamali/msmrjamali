@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard'
 
 const HERO_VIDEO_URL = 'https://rqmsfqcbtlipmibukqwk.supabase.co/storage/v1/object/public/product-images/site-assets/hero.mp4'
 
+
 function Home() {
   const [categories, setCategories] = useState([])
 
@@ -13,6 +14,7 @@ function Home() {
       const { data, error } = await supabase
         .from('categories')
         .select('*')
+        .eq('is_visible', true)
         .order('sort_order')
       if (!error) setCategories(data)
     }

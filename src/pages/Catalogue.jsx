@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard'
 
 const SIZE_GUIDE_IMAGE_URL = 'https://rqmsfqcbtlipmibukqwk.supabase.co/storage/v1/object/public/product-images/site-assets/size-guide.jpg'
 
+
 function SizeGuide() {
   const [open, setOpen] = useState(false)
 
@@ -128,6 +129,7 @@ function Catalogue() {
       const { data, error } = await supabase
         .from('categories')
         .select('*')
+        .eq('is_visible', true)
         .order('sort_order')
       if (error) {
         console.error('Error fetching categories:', error)
