@@ -6,7 +6,7 @@ function ProductCard({ category }) {
       to={`/catalogue/${category.slug}`}
       className="group block bg-white rounded-lg overflow-hidden border border-brand-grey hover:border-brand-blue transition-colors"
     >
-      <div className="aspect-[4/3] bg-brand-grey flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-[4/3] bg-brand-grey flex items-center justify-center overflow-hidden">
         {category.cover_image_url ? (
           <img
             src={category.cover_image_url}
@@ -15,6 +15,12 @@ function ProductCard({ category }) {
           />
         ) : (
           <span className="text-brand-charcoal/40 text-sm">Photo coming soon</span>
+        )}
+
+        {category.is_new && (
+          <span className="absolute top-3 left-3 bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+            NEW
+          </span>
         )}
       </div>
 
