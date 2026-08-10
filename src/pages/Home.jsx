@@ -44,7 +44,7 @@ function Home() {
           </h1>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-8">
             We manufacture racking systems for warehouses, hardware stores, and
-            businesses across Kota — five configurable varieties, every size you need.
+            businesses across Kota — Seven configurable varieties, every size you need.
           </p>
           <Link
             to="/catalogue"
